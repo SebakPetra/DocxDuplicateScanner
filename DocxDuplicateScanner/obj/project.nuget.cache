@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "GugC5krmqcY=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\z004cdsd\\Documents\\Magan\\Beni\\DocxDuplicateScanner\\DocxDuplicateScanner\\DocxDuplicateScanner.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\z004cdsd\\.nuget\\packages\\documentformat.openxml\\3.3.0\\documentformat.openxml.3.3.0.nupkg.sha512",
+    "C:\\Users\\z004cdsd\\.nuget\\packages\\documentformat.openxml.framework\\3.3.0\\documentformat.openxml.framework.3.3.0.nupkg.sha512",
+    "C:\\Users\\z004cdsd\\.nuget\\packages\\system.io.packaging\\8.0.1\\system.io.packaging.8.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
