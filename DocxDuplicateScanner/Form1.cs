@@ -1,6 +1,11 @@
-﻿using DocxDuplicateScanner.UI;
-using DocxDuplicateScanner.Logic;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
 using DocxDuplicateScanner.Models;
+using DocxDuplicateScanner.Logic;
+using DocxDuplicateScanner.UI;
 
 namespace DocxDuplicateScanner
 {
@@ -9,11 +14,12 @@ namespace DocxDuplicateScanner
         private DragDropPanel dragDropPanel;
         private BrowseButton browseButton;
         private FileListPanel fileListPanel;
-        private ScanButton scanButton;
+        private ButtonsPanel buttonsPanel;
         private ResultsGrid resultsGrid;
         private PopupManager popupManager;
 
         private List<string> draggedFiles = new List<string>();
+        private List<Person> duplicates = new List<Person>();
 
         public Form1()
         {
@@ -24,55 +30,60 @@ namespace DocxDuplicateScanner
         private void InitializeUI()
         {
             Text = "Docx Duplicate Scanner";
-            Size = new Size(900, 680);
+            Size = new Size(920, 800);
             BackColor = Color.WhiteSmoke;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
 
             popupManager = new PopupManager();
 
-            dragDropPanel = new DragDropPanel();
-            dragDropPanel.Location = new Point(10, 10);
+            // Drag & Drop panel
+            dragDropPanel = new DragDropPanel { Location = new Point(10, 10) };
+            dragDropPanel.FilesDropped += FilesDropped;
             Controls.Add(dragDropPanel);
 
-            browseButton = new BrowseButton();
-            browseButton.Location = new Point(10, dragDropPanel.Bottom + 5);
+            // Browse button
+            browseButton = new BrowseButton { Location = new Point(10, dragDropPanel.Bottom + 8) };
             browseButton.OnFilesSelected += FilesDropped;
             Controls.Add(browseButton);
 
-            fileListPanel = new FileListPanel();
-            fileListPanel.Location = new Point(10, 170);
+            // File list panel
+            fileListPanel = new FileListPanel { Location = new Point(10, browseButton.Bottom + 10) };
             Controls.Add(fileListPanel);
 
-            scanButton = new ScanButton();
-            scanButton.Location = new Point(10, 325);
-            scanButton.Click += ScanButton_Click;
-            Controls.Add(scanButton);
+            // Buttons panel
+            buttonsPanel = new ButtonsPanel { Location = new Point(10, fileListPanel.Bottom + 10) };
+            buttonsPanel.OnScanClick += ScanButton_Click;
+            buttonsPanel.OnScanDbClick += ScanWithDbButton_Click;
+            buttonsPanel.OnExportClick += ExportButton_Click;
+            buttonsPanel.OnSaveDbClick += SaveToDbButton_Click;
+            buttonsPanel.OnViewDbClick += ViewRecordsButton_Click;
+            Controls.Add(buttonsPanel);
 
-            resultsGrid = new ResultsGrid();
-            resultsGrid.Location = new Point(10, 385);
+            // Results grid
+            resultsGrid = new ResultsGrid { Location = new Point(10, buttonsPanel.Bottom + 5) };
             resultsGrid.OnPersonDoubleClick += ShowPersonLocations;
             Controls.Add(resultsGrid);
         }
 
         private void FilesDropped(IEnumerable<string> files)
         {
-            var docxFiles = files
-                .Where(f => f.EndsWith(".docx", StringComparison.OrdinalIgnoreCase))
-                .ToList();
-
-            var newFiles = docxFiles.Where(f => !draggedFiles.Contains(f)).ToList();
-            if (!newFiles.Any()) return;
-
-            draggedFiles.AddRange(newFiles);
-            fileListPanel.AddFiles(newFiles);
+            foreach (var file in files.Where(f => f.EndsWith(".docx", StringComparison.OrdinalIgnoreCase)))
+            {
+                if (!draggedFiles.Contains(file))
+                {
+                    draggedFiles.Add(file);
+                    fileListPanel.AddFile(file);
+                }
+            }
         }
 
         private void ScanButton_Click(object sender, EventArgs e)
         {
-            var files = fileListPanel.GetSelectedFiles();
-
-            if (files.Count == 0)
+            var files = fileListPanel.GetFiles();
+            if (!files.Any())
             {
-                popupManager.ShowInfo("Hiba", "Nincs behúzott vagy kiválasztott fájl.");
+                popupManager.ShowInfo("Hiba", "Nincs kiválasztott vagy behúzott fájl.");
                 return;
             }
 
@@ -80,11 +91,86 @@ namespace DocxDuplicateScanner
             foreach (var file in files)
                 allPeople.AddRange(DocxProcessor.Process(file));
 
-            var duplicates = Utilities.FindDuplicates(allPeople);
+            duplicates = Utilities.FindDuplicates(allPeople);
+            resultsGrid.UpdateGrid(duplicates.Distinct().ToList());
+
+            if (!duplicates.Any())
+                popupManager.ShowInfo("Nincs duplikált", "A dokumentumokban nem található duplikált bejegyzés.");
+        }
+
+        private void ScanWithDbButton_Click(object sender, EventArgs e)
+        {
+            var files = fileListPanel.GetFiles();
+            if (files.Count == 0)
+            {
+                popupManager.ShowInfo("Hiba", "Nincs kiválasztott fájl.");
+                return;
+            }
+
+            List<Person> newPeople = new List<Person>();
+            foreach (var file in files)
+                newPeople.AddRange(DocxProcessor.Process(file));
+
+            var duplicates = DatabaseService.Instance.FindDuplicates(newPeople);
+
             resultsGrid.UpdateGrid(duplicates);
 
-            if (duplicates.Count == 0)
-                popupManager.ShowInfo("Nincs duplikált", "A dokumentumokban nem található duplikált bejegyzés.");
+            if (duplicates.Count > 0)
+                popupManager.ShowInfo("Duplikációk találat", $"{duplicates.Count} duplikált található az adatbázisban.");
+            else
+                popupManager.ShowInfo("Nincs duplikáció", "Az új fájlok nem tartalmaznak duplikált bejegyzést az adatbázisban.");
+        }
+
+        private void ExportButton_Click(object sender, EventArgs e)
+        {
+            var people = resultsGrid.GetDisplayedPeople();
+            if (!people.Any())
+            {
+                popupManager.ShowInfo("Hiba", "Nincs mit exportálni.");
+                return;
+            }
+
+            using SaveFileDialog sfd = new SaveFileDialog
+            {
+                Filter = "Excel Files|*.xlsx",
+                FileName = "Duplikaltak.xlsx"
+            };
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                ExcelExporter.ExportToExcel(people, sfd.FileName);
+                popupManager.ShowInfo("Kész", "Exportálás megtörtént.");
+            }
+        }
+
+        private void SaveToDbButton_Click(object sender, EventArgs e)
+        {
+            var files = fileListPanel.GetFiles();
+            if (!files.Any())
+            {
+                popupManager.ShowInfo("Hiba", "Nincs kiválasztott vagy behúzott fájl.");
+                return;
+            }
+
+            List<Person> people = new List<Person>();
+            foreach (var file in files)
+                people.AddRange(DocxProcessor.Process(file));
+
+            if (!people.Any())
+            {
+                popupManager.ShowInfo("Hiba", "Nincs menteni való adat.");
+                return;
+            }
+
+            DatabaseService.Instance.SaveOrUpdatePeople(people.Distinct().ToList());
+            popupManager.ShowInfo("Mentés kész", "Az adatok mentésre kerültek az adatbázisba.");
+        }
+
+        private void ViewRecordsButton_Click(object sender, EventArgs e)
+        {
+            var allRecords = DatabaseService.Instance.GetAllRecords();
+            var dbForm = new DatabaseViewForm();
+            dbForm.ShowDialog();
         }
 
         private void ShowPersonLocations(Person person)

@@ -50,9 +50,25 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "dependencies": {
+            "DocX": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
             "DocumentFormat.OpenXml": {
               "target": "Package",
               "version": "[3.3.0, )"
+            },
+            "EPPlus": {
+              "target": "Package",
+              "version": "[8.2.1, )"
+            },
+            "Microsoft.Data.Sqlite.Core": {
+              "target": "Package",
+              "version": "[9.0.10, )"
+            },
+            "System.Data.SQLite.Core": {
+              "target": "Package",
+              "version": "[1.0.119, )"
             }
           },
           "imports": [

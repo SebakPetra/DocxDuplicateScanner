@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -11,59 +10,63 @@ namespace DocxDuplicateScanner.UI
     {
         private Label lblFiles;
         private ListBox listBoxFiles;
-        private List<string> files = new();
+        private List<string> files = new List<string>();
 
         public event Action<string> OnFileRemoved;
 
-        public FileListPanel()
+        public FileListPanel()  
         {
+            Size = new Size(860, 150);
+            BackColor = Color.LightGray;
+
             InitializeComponents();
         }
 
         private void InitializeComponents()
         {
-            Size = new Size(860, 150);
-            BorderStyle = BorderStyle.FixedSingle;
-            BackColor = Color.LightGray;
-
             lblFiles = new Label
             {
                 Text = "Fájlok:",
-                Location = new Point(10, 10),
-                Size = new Size(100, 20),
-                Font = new Font("Segoe UI", 10, FontStyle.Bold)
+                Location = new Point(5, 5),
+                Size = new Size(100, 25),
+                Font = new Font("Segoe UI", 10, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleLeft
             };
             Controls.Add(lblFiles);
 
             listBoxFiles = new ListBox
             {
-                Location = new Point(120, 10),
-                Size = new Size(720, 130),
-                BackColor = Color.WhiteSmoke,
+                Location = new Point(105 , 5),
+                Size = new Size(740, 140),
+                Font = new Font("Segoe UI", 10),
                 BorderStyle = BorderStyle.FixedSingle,
                 DrawMode = DrawMode.OwnerDrawFixed
             };
             listBoxFiles.DrawItem += ListBoxFiles_DrawItem;
-            listBoxFiles.MouseClick += ListBoxFiles_MouseClick;
             Controls.Add(listBoxFiles);
         }
 
-        public void AddFiles(IEnumerable<string> filePaths)
+        public void AddFile(string file)
         {
-            foreach (var filePath in filePaths)
-                AddFile(filePath);
+            if (!files.Contains(file))
+            {
+                files.Add(file);
+                listBoxFiles.Items.Add(file);
+                listBoxFiles.Refresh();
+            }
         }
 
-        public void AddFile(string filePath)
-        {
-            if (!File.Exists(filePath) || files.Contains(filePath)) return;
-            files.Add(filePath);
-            listBoxFiles.Items.Add(Path.GetFileName(filePath));
-        }
+        public List<string> GetFiles() => files.ToList();
 
-        public List<string> GetSelectedFiles()
+        public void RemoveFile(string file)
         {
-            return files.ToList();
+            if (files.Contains(file))
+            {
+                files.Remove(file);
+                listBoxFiles.Items.Remove(file);
+                OnFileRemoved?.Invoke(file);
+                listBoxFiles.Refresh();
+            }
         }
 
         private void ListBoxFiles_DrawItem(object sender, DrawItemEventArgs e)
@@ -71,7 +74,8 @@ namespace DocxDuplicateScanner.UI
             e.DrawBackground();
             if (e.Index < 0) return;
 
-            string fileName = listBoxFiles.Items[e.Index].ToString();
+            string fullPath = listBoxFiles.Items[e.Index].ToString()!;
+            string fileName = Path.GetFileName(fullPath);
 
             using (Brush textBrush = new SolidBrush(Color.Black))
                 e.Graphics.DrawString(fileName, e.Font, textBrush, e.Bounds.Left + 5, e.Bounds.Top + 2);
@@ -82,30 +86,23 @@ namespace DocxDuplicateScanner.UI
             e.DrawFocusRectangle();
         }
 
-        private void ListBoxFiles_MouseClick(object sender, MouseEventArgs e)
+
+        protected override void OnMouseClick(MouseEventArgs e)
         {
+            base.OnMouseClick(e);
+
             int index = listBoxFiles.IndexFromPoint(e.Location);
-            if (index < 0) return;
-
-            Rectangle itemRect = listBoxFiles.GetItemRectangle(index);
-            if (e.X >= itemRect.Right - 25)
+            if (index >= 0)
             {
-                string fileName = listBoxFiles.Items[index].ToString();
-                string fullPath = files[index];
-
-                var result = MessageBox.Show(
-                    $"Biztos törölni szeretnéd a(z) {fileName} fájlt a listából?",
-                    "Megerősítés",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question);
-
-                if (result == DialogResult.Yes)
+                int xWidth = 16;
+                int xHeight = listBoxFiles.ItemHeight - 8;
+                Rectangle rectX = new Rectangle(listBoxFiles.Right - xWidth - 4, listBoxFiles.Top + index * listBoxFiles.ItemHeight + 4, xWidth, xHeight);
+                if (rectX.Contains(e.Location))
                 {
-                    files.RemoveAt(index);
-                    listBoxFiles.Items.RemoveAt(index);
-                    OnFileRemoved?.Invoke(fullPath);
+                    RemoveFile(listBoxFiles.Items[index].ToString()!);
                 }
             }
         }
+
     }
 }

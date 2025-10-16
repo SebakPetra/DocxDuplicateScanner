@@ -1,18 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace DocxDuplicateScanner.Models
 {
     public class Person
     {
-        public string Name { get; set; } = "N/A";
-        public string Phone { get; set; } = "N/A";
-        public string Address { get; set; } = "N/A";
-        public List<string> Errors { get; set; } = new List<string>();
+        public string Name { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string Address { get; set; } = string.Empty;
         public List<string> Files { get; set; } = new List<string>();
-        public string UniqueKey => $"{Name.ToLowerInvariant()}_{Phone}";
+        public List<string> Errors { get; set; } = new List<string>();
+
+        public string UniqueHash
+        {
+            get
+            {
+                using var sha = SHA256.Create();
+                string raw = $"{Name.Trim().ToLower()}|{Phone.Trim()}|{Address.Trim().ToLower()}";
+                byte[] hashBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(raw));
+                return BitConverter.ToString(hashBytes).Replace("-", "");
+            }
+        }
     }
 }

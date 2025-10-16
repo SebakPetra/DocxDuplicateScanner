@@ -1,54 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace DocxDuplicateScanner.UI
 {
     public class BrowseButton : Button
     {
-        public event Action<IEnumerable<string>> OnFilesSelected;
-
-        private Color defaultColor = Color.LightGray;
-        private Color hoverColor = Color.DimGray;
+        public event Action<string[]> OnFilesSelected;
 
         public BrowseButton()
         {
             Text = "Tallózás...";
-            BackColor = defaultColor;
+            Size = new Size(120, 35);
+            BackColor = Color.LightGray;
             ForeColor = Color.Black;
             FlatStyle = FlatStyle.Flat;
             FlatAppearance.BorderSize = 0;
-            Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            Size = new Size(120, 30);
-            Cursor = Cursors.Hand;
 
-            MouseEnter += (s, e) => BackColor = hoverColor;
-            MouseLeave += (s, e) => BackColor = defaultColor;
+            var tooltip = new ToolTip();
+            tooltip.SetToolTip(this, "Fájlok kiválasztása");
 
-            Click += BrowseButton_Click;
-        }
+            MouseEnter += (s, e) => BackColor = Color.Gray;
+            MouseLeave += (s, e) => BackColor = Color.LightGray;
 
-        private void BrowseButton_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            Click += (s, e) =>
             {
-                ofd.Filter = "Word dokumentumok (*.docx)|*.docx";
-                ofd.Multiselect = true;
-
-                if (ofd.ShowDialog() == DialogResult.OK)
+                using OpenFileDialog ofd = new OpenFileDialog
                 {
-                    var validFiles = ofd.FileNames
-                        .Where(f => f.EndsWith(".docx", StringComparison.OrdinalIgnoreCase))
-                        .ToList();
-
-                    if (validFiles.Any())
-                    {
-                        OnFilesSelected?.Invoke(validFiles);
-                    }
-                }
-            }
+                    Filter = "Word Documents|*.docx",
+                    Multiselect = true
+                };
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    OnFilesSelected?.Invoke(ofd.FileNames);
+            };
         }
     }
 }

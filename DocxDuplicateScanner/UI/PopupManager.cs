@@ -1,4 +1,8 @@
-﻿using DocxDuplicateScanner.Models;
+﻿using System;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+using DocxDuplicateScanner.Models;
 
 namespace DocxDuplicateScanner.UI
 {
@@ -24,12 +28,11 @@ namespace DocxDuplicateScanner.UI
                 TextAlign = ContentAlignment.TopLeft,
                 Font = new Font("Segoe UI", 10)
             };
-
             Button btnOk = new Button
             {
                 Text = "OK",
                 Size = new Size(80, 30),
-                Location = new Point(150, 120),
+                Location = new Point((popup.Width - 80) / 2, popup.Height - 50),
                 BackColor = Color.FromArgb(150, 0, 0),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
@@ -57,48 +60,29 @@ namespace DocxDuplicateScanner.UI
             {
                 Text = "Az alábbi fájlokban megtalálható:",
                 AutoSize = false,
-                Size = new Size(450, 25),
+                Size = new Size(450, 20),
                 Location = new Point(20, 10),
                 Font = new Font("Segoe UI", 11, FontStyle.Bold),
                 TextAlign = ContentAlignment.TopLeft
             };
             popup.Controls.Add(lblTitle);
 
-            Panel panelFiles = new Panel
+            ListBox list = new ListBox
             {
-                Location = new Point(20, 45),
-                Size = new Size(450, 150),
-                AutoScroll = true,
+                Location = new Point(20, 40),
+                Size = new Size(440, 180),
+                Font = new Font("Segoe UI", 10),
                 BorderStyle = BorderStyle.FixedSingle
             };
-            popup.Controls.Add(panelFiles);
-
             if (person.Files != null)
-            {
-                int y = 5;
-                int rowHeight = 22;
-
-                foreach (var file in person.Files.Where(f => !string.IsNullOrEmpty(f)))
-                {
-                    Label lblFile = new Label
-                    {
-                        Text = file,
-                        AutoSize = false,
-                        Size = new Size(panelFiles.Width - 10, rowHeight),
-                        Location = new Point(5, y),
-                        Font = new Font("Segoe UI", 10),
-                        TextAlign = ContentAlignment.MiddleLeft
-                    };
-                    panelFiles.Controls.Add(lblFile);
-                    y += rowHeight;
-                }
-            }
+                list.Items.AddRange(person.Files.Where(f => !string.IsNullOrEmpty(f)).ToArray());
+            popup.Controls.Add(list);
 
             Button btnClose = new Button
             {
                 Text = "Bezár",
                 Size = new Size(80, 30),
-                Location = new Point((popup.ClientSize.Width - 80) / 2, popup.ClientSize.Height - 50),
+                Location = new Point(200, 230),
                 BackColor = Color.FromArgb(150, 0, 0),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
@@ -109,6 +93,5 @@ namespace DocxDuplicateScanner.UI
 
             popup.ShowDialog();
         }
-
     }
 }

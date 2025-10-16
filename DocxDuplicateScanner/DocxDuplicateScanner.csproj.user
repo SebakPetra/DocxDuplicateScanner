@@ -7,6 +7,12 @@
     <Compile Update="UI\BrowseButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Update="UI\DatabaseViewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UI\DbRecordsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="UI\DragDropPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -16,7 +22,7 @@
     <Compile Update="UI\ResultsGrid.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="UI\ScanButton.cs">
+    <Compile Update="UI\ButtonsPanel.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>

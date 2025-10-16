@@ -1,4 +1,6 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 using DocxDuplicateScanner.Models;
 
 namespace DocxDuplicateScanner.UI
@@ -9,47 +11,41 @@ namespace DocxDuplicateScanner.UI
 
         public ResultsGrid()
         {
-            Size = new Size(860, 220);
+            Width = 880;
+            Height = 300;
             AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            BackgroundColor = Color.White;
-            BorderStyle = BorderStyle.FixedSingle;
-            SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             AllowUserToAddRows = false;
-            AllowUserToDeleteRows = false;
             ReadOnly = true;
 
             Columns.Add("Name", "Név");
             Columns.Add("Phone", "Telefonszám");
             Columns.Add("Address", "Cím");
-            Columns.Add("Files", "Fájlok");
+            Columns.Add("Errors", "Hibák");
 
-            CellDoubleClick += ResultsGrid_CellDoubleClick;
-        }
-
-        private void ResultsGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0 && e.RowIndex < Rows.Count)
+            CellDoubleClick += (s, e) =>
             {
-                var row = Rows[e.RowIndex];
-                var person = new Person
-                {
-                    Name = row.Cells["Name"].Value?.ToString(),
-                    Phone = row.Cells["Phone"].Value?.ToString(),
-                    Address = row.Cells["Address"].Value?.ToString(),
-                    Files = row.Cells["Files"].Value?.ToString().Split(';').ToList()
-                };
-                OnPersonDoubleClick?.Invoke(person);
-            }
+                if (e.RowIndex >= 0)
+                    OnPersonDoubleClick?.Invoke(Rows[e.RowIndex].Tag as Person);
+            };
         }
 
-        public void UpdateGrid(List<Person> duplicates)
+        public void UpdateGrid(List<Person> people)
         {
             Rows.Clear();
-
-            foreach (var p in duplicates)
+            foreach (var p in people)
             {
-                Rows.Add(p.Name, p.Phone, p.Address, string.Join("; ", p.Files ?? new List<string>()));
+                int idx = Rows.Add(p.Name, p.Phone, p.Address, string.Join("; ", p.Errors));
+                Rows[idx].Tag = p;
             }
+        }
+
+        public List<Person> GetDisplayedPeople()
+        {
+            var list = new List<Person>();
+            foreach (DataGridViewRow row in Rows)
+                if (row.Tag is Person p)
+                    list.Add(p);
+            return list;
         }
     }
 }
