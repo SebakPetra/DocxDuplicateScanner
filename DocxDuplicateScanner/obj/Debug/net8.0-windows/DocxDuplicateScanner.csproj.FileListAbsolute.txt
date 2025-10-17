@@ -28,7 +28,6 @@ C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\runtimes\win-x86\native\SQLite.Interop.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\obj\Debug\net8.0-windows\DocxDuplicateScanner.sourcelink.json
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\EPPlus.dll
-C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\EPPlus.Interfaces.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\Microsoft.Extensions.Configuration.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\Microsoft.Extensions.Configuration.Abstractions.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\Microsoft.Extensions.Configuration.FileExtensions.dll
@@ -38,9 +37,6 @@ C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\Microsoft.Extensions.FileSystemGlobbing.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\Microsoft.Extensions.Primitives.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\Microsoft.IO.RecyclableMemoryStream.dll
-C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\System.Security.Cryptography.Pkcs.dll
-C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\System.Security.Cryptography.Xml.dll
-C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Security.Cryptography.Pkcs.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\Xceed.Document.NET.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\Xceed.Drawing.NET.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\Xceed.Words.NET.dll
@@ -49,3 +45,4 @@ C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\runtimes\win-arm64\native\libSkiaSharp.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\runtimes\win-x64\native\libSkiaSharp.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\runtimes\win-x86\native\libSkiaSharp.dll
+C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\obj\Debug\net8.0-windows\DatabaseViewForm.resources

@@ -60,7 +60,7 @@
             },
             "EPPlus": {
               "target": "Package",
-              "version": "[8.2.1, )"
+              "version": "[5.8.14, )"
             },
             "Microsoft.Data.Sqlite.Core": {
               "target": "Package",

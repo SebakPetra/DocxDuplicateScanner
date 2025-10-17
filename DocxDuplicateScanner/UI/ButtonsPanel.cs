@@ -27,8 +27,8 @@ namespace DocxDuplicateScanner.UI
 
         private void InitializeButtons()
         {
-            int btnTopWidth = 280;
-            int btnBottomWidth = 160;
+            int btnTopWidth = 310;
+            int btnBottomWidth = 230;
             int btnHeightTop = 35;
             int btnHeightBottom = 28;
 

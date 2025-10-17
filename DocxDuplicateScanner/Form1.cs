@@ -49,6 +49,7 @@ namespace DocxDuplicateScanner
 
             // File list panel
             fileListPanel = new FileListPanel { Location = new Point(10, browseButton.Bottom + 10) };
+            fileListPanel.OnFileRemoved += FileListPanel_OnFileRemoved;
             Controls.Add(fileListPanel);
 
             // Buttons panel
@@ -64,6 +65,11 @@ namespace DocxDuplicateScanner
             resultsGrid = new ResultsGrid { Location = new Point(10, buttonsPanel.Bottom + 5) };
             resultsGrid.OnPersonDoubleClick += ShowPersonLocations;
             Controls.Add(resultsGrid);
+        }
+
+        private void FileListPanel_OnFileRemoved(string file)
+        {
+            draggedFiles.Remove(file);
         }
 
         private void FilesDropped(IEnumerable<string> files)
@@ -101,24 +107,25 @@ namespace DocxDuplicateScanner
         private void ScanWithDbButton_Click(object sender, EventArgs e)
         {
             var files = fileListPanel.GetFiles();
-            if (files.Count == 0)
+            var existing = DatabaseService.Instance.GetFilesAlreadySaved(files);
+
+            if (existing.Count > 0)
             {
-                popupManager.ShowInfo("Hiba", "Nincs kiválasztott fájl.");
-                return;
+                var popup = new AlreadySavedPopup(files, existing, resultsGrid, popupManager);
+                popup.Show();
             }
-
-            List<Person> newPeople = new List<Person>();
-            foreach (var file in files)
-                newPeople.AddRange(DocxProcessor.Process(file));
-
-            var duplicates = DatabaseService.Instance.FindDuplicates(newPeople);
-
-            resultsGrid.UpdateGrid(duplicates);
-
-            if (duplicates.Count > 0)
-                popupManager.ShowInfo("Duplikációk találat", $"{duplicates.Count} duplikált található az adatbázisban.");
             else
-                popupManager.ShowInfo("Nincs duplikáció", "Az új fájlok nem tartalmaznak duplikált bejegyzést az adatbázisban.");
+            {
+                var people = new List<Person>();
+                foreach (var file in files)
+                    people.AddRange(DocxProcessor.Process(file));
+
+                var duplicates = DatabaseService.Instance.FindDuplicates(people);
+                resultsGrid.UpdateGrid(duplicates);
+
+                if (!duplicates.Any())
+                    popupManager.ShowInfo("Nincs duplikált", "Az adatbázisban nem található duplikált bejegyzés.");
+            }
         }
 
         private void ExportButton_Click(object sender, EventArgs e)

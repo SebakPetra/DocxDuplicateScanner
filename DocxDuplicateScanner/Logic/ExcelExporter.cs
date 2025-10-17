@@ -1,21 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using DocxDuplicateScanner.Models;
+﻿using DocxDuplicateScanner.Models;
 using OfficeOpenXml;
 
 namespace DocxDuplicateScanner.Logic
 {
     public static class ExcelExporter
     {
-        static ExcelExporter()
-        {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        }
-
         public static void ExportToExcel(List<Person> people, string filePath)
         {
+
             if (people == null || people.Count == 0)
                 throw new ArgumentException("Nincs exportálható adat.", nameof(people));
 

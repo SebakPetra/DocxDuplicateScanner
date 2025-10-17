@@ -28,7 +28,6 @@ namespace DocxDuplicateScanner.Logic
 
             foreach (var person in people)
             {
-                // Ellenőrzés, hogy létezik-e már
                 string checkSql = "SELECT Files FROM People WHERE UniqueHash=@hash";
                 using var checkCmd = new SQLiteCommand(checkSql, conn);
                 checkCmd.Parameters.AddWithValue("@hash", person.UniqueHash);
@@ -36,7 +35,6 @@ namespace DocxDuplicateScanner.Logic
 
                 if (existingFiles != null)
                 {
-                    // Frissítés: hozzáadjuk az új fájlokat, duplikációk nélkül
                     var allFiles = existingFiles.Split(',').Select(f => f.Trim()).ToList();
                     allFiles.AddRange(person.Files);
                     allFiles = allFiles.Distinct().ToList();
@@ -49,7 +47,6 @@ namespace DocxDuplicateScanner.Logic
                 }
                 else
                 {
-                    // Új rekord beszúrása
                     string insertSql = "INSERT INTO People (UniqueHash, Name, Phone, Address, Files) VALUES (@hash,@name,@phone,@address,@files)";
                     using var insertCmd = new SQLiteCommand(insertSql, conn);
                     insertCmd.Parameters.AddWithValue("@hash", person.UniqueHash);
@@ -61,10 +58,6 @@ namespace DocxDuplicateScanner.Logic
                 }
             }
         }
-
-        /// <summary>
-        /// Duplikáció keresés az adatbázisban az újonnan behúzott emberekhez képest
-        /// </summary>
         public List<Person> FindDuplicates(List<Person> newPeople)
         {
             var duplicates = new List<Person>();
@@ -92,9 +85,6 @@ namespace DocxDuplicateScanner.Logic
             return duplicates;
         }
 
-        /// <summary>
-        /// Összes rekord lekérése
-        /// </summary>
         public List<Person> GetAllRecords()
         {
             var people = new List<Person>();
@@ -117,9 +107,6 @@ namespace DocxDuplicateScanner.Logic
             return people;
         }
 
-        /// <summary>
-        /// Összes rekord törlése
-        /// </summary>
         public void DeleteAllRecords()
         {
             using var conn = new SQLiteConnection(connectionString);
@@ -127,6 +114,28 @@ namespace DocxDuplicateScanner.Logic
             string sql = "DELETE FROM People";
             using var cmd = new SQLiteCommand(sql, conn);
             cmd.ExecuteNonQuery();
+        }
+
+        public List<string> GetFilesAlreadySaved(List<string> files)
+        {
+            var saved = new List<string>();
+
+            using var conn = new SQLiteConnection(connectionString);
+            conn.Open();
+
+            foreach (var fullPath in files)
+            {
+                string fileName = Path.GetFileName(fullPath); // csak a fájl neve
+                string sql = "SELECT COUNT(1) FROM People WHERE Files LIKE @file";
+                using var cmd = new SQLiteCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@file", $"%{fileName}%");
+
+                var count = Convert.ToInt32(cmd.ExecuteScalar());
+                if (count > 0)
+                    saved.Add(fullPath);
+            }
+
+            return saved;
         }
     }
 }

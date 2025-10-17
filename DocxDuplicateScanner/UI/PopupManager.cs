@@ -13,7 +13,7 @@ namespace DocxDuplicateScanner.UI
             using Form popup = new Form
             {
                 Text = title,
-                Size = new Size(400, 200),
+                Size = new Size(400, 250),
                 StartPosition = FormStartPosition.CenterParent,
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 BackColor = Color.White
@@ -32,7 +32,7 @@ namespace DocxDuplicateScanner.UI
             {
                 Text = "OK",
                 Size = new Size(80, 30),
-                Location = new Point((popup.Width - 80) / 2, popup.Height - 50),
+                Location = new Point((popup.Width - 80) / 2, popup.Height - 100),
                 BackColor = Color.FromArgb(150, 0, 0),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
@@ -82,7 +82,7 @@ namespace DocxDuplicateScanner.UI
             {
                 Text = "Bezár",
                 Size = new Size(80, 30),
-                Location = new Point(200, 230),
+                Location = new Point(200, 210),
                 BackColor = Color.FromArgb(150, 0, 0),
                 ForeColor = Color.White,
                 FlatStyle = FlatStyle.Flat
