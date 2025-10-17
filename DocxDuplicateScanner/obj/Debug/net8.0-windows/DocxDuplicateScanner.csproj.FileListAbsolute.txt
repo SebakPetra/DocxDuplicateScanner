@@ -46,3 +46,4 @@ C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\runtimes\win-x64\native\libSkiaSharp.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\bin\Debug\net8.0-windows\runtimes\win-x86\native\libSkiaSharp.dll
 C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\obj\Debug\net8.0-windows\DatabaseViewForm.resources
+C:\Users\z004cdsd\Documents\Magan\Beni\DocxDuplicateScanner\DocxDuplicateScanner\obj\Debug\net8.0-windows\DocxDuplicateScanner.Properties.Resources.resources

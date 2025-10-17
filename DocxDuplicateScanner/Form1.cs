@@ -18,6 +18,8 @@ namespace DocxDuplicateScanner
         private ResultsGrid resultsGrid;
         private PopupManager popupManager;
 
+        private Label lblDuplicateRecords;
+
         private List<string> draggedFiles = new List<string>();
         private List<Person> duplicates = new List<Person>();
 
@@ -25,20 +27,51 @@ namespace DocxDuplicateScanner
         {
             InitializeComponent();
             InitializeUI();
+
+            Icon = Properties.Resources.gpc_dds_icon;
         }
 
         private void InitializeUI()
         {
-            Text = "Docx Duplicate Scanner";
-            Size = new Size(920, 800);
+            Text = "GPC Docx Duplicate Scanner";
+            Size = new Size(915, 890);
             BackColor = Color.WhiteSmoke;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             MaximizeBox = false;
 
+            var headerPanel = new Panel
+            {
+                Location = new Point(0, 0),
+                Size = new Size(this.ClientSize.Width, 65),
+                BackColor = Color.WhiteSmoke
+            };
+            this.Controls.Add(headerPanel);
+
+            // Logo
+            var logo = new PictureBox
+            {
+                Image = Properties.Resources.gpc_dds_image_bold,
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Location = new Point(13, 7),
+                Size = new Size(60, 60)
+            };
+            headerPanel.Controls.Add(logo);
+
+            // Cím
+            var titleLabel = new Label
+            {
+                Text = "GPC Docx Duplicate Scanner",
+                Font = new Font("Segoe UI", 16, FontStyle.Bold),
+                Location = new Point(70, 15),
+                AutoSize = true,
+                ForeColor = Color.Black
+            };
+            headerPanel.Controls.Add(titleLabel);
+
             popupManager = new PopupManager();
 
             // Drag & Drop panel
-            dragDropPanel = new DragDropPanel { Location = new Point(10, 10) };
+            dragDropPanel = new DragDropPanel { Location = new Point(10, 75) };
             dragDropPanel.FilesDropped += FilesDropped;
             Controls.Add(dragDropPanel);
 
@@ -48,7 +81,7 @@ namespace DocxDuplicateScanner
             Controls.Add(browseButton);
 
             // File list panel
-            fileListPanel = new FileListPanel { Location = new Point(10, browseButton.Bottom + 10) };
+            fileListPanel = new FileListPanel { Location = new Point(10, browseButton.Bottom + 20) };
             fileListPanel.OnFileRemoved += FileListPanel_OnFileRemoved;
             Controls.Add(fileListPanel);
 
@@ -61,8 +94,17 @@ namespace DocxDuplicateScanner
             buttonsPanel.OnViewDbClick += ViewRecordsButton_Click;
             Controls.Add(buttonsPanel);
 
+            lblDuplicateRecords = new Label
+            {
+                Text = "Duplikált nevek száma: 0",
+                Font = new Font("Segoe UI", 9, FontStyle.Bold),
+                Location = new Point(10, buttonsPanel.Bottom + 5),
+                AutoSize = true
+            };
+            Controls.Add(lblDuplicateRecords);
+
             // Results grid
-            resultsGrid = new ResultsGrid { Location = new Point(10, buttonsPanel.Bottom + 5) };
+            resultsGrid = new ResultsGrid { Location = new Point(10, lblDuplicateRecords.Bottom + 5) };
             resultsGrid.OnPersonDoubleClick += ShowPersonLocations;
             Controls.Add(resultsGrid);
         }
@@ -83,6 +125,13 @@ namespace DocxDuplicateScanner
                 }
             }
         }
+        private void UpdateDuplicateStats(List<Person> allPeople)
+        {
+            var duplicates = allPeople.Where(p => p.Files.Count > 1).ToList();
+            int duplicateRecords = duplicates.Count;
+
+            lblDuplicateRecords.Text = $"Duplikált nevek száma: {duplicateRecords}";
+        }
 
         private void ScanButton_Click(object sender, EventArgs e)
         {
@@ -99,6 +148,8 @@ namespace DocxDuplicateScanner
 
             duplicates = Utilities.FindDuplicates(allPeople);
             resultsGrid.UpdateGrid(duplicates.Distinct().ToList());
+
+            UpdateDuplicateStats(duplicates.Distinct().ToList());
 
             if (!duplicates.Any())
                 popupManager.ShowInfo("Nincs duplikált", "A dokumentumokban nem található duplikált bejegyzés.");
@@ -122,6 +173,8 @@ namespace DocxDuplicateScanner
 
                 var duplicates = DatabaseService.Instance.FindDuplicates(people);
                 resultsGrid.UpdateGrid(duplicates);
+
+                UpdateDuplicateStats(duplicates.Distinct().ToList());
 
                 if (!duplicates.Any())
                     popupManager.ShowInfo("Nincs duplikált", "Az adatbázisban nem található duplikált bejegyzés.");

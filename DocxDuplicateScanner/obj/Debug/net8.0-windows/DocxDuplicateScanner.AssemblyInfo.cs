@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DocxDuplicateScanner")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+070767c93b2de6f59be31b64775eaf157f2e9483")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+de74033c22784eae28ee603754b592fab7c9b83c")]
 [assembly: System.Reflection.AssemblyProductAttribute("DocxDuplicateScanner")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DocxDuplicateScanner")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
